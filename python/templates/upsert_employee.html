@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Employee</title>
+  </head>
+<body>
+    {% if error %}
+    <div style="color: red;">{{error}}</div>
+    {% endif %}
+    <form action="{{ url_for('upsert_employees') }}" method="post">
+        <input type="hidden" id="employee_id" 
+                name="employee_id" 
+                value = "{{emp.get('employee_id', '')}}">
+        <table border="1">
+        <tr>
+            <td><label for="first_name">First Name:</label></td>
+            <td><input type="text" id="first_name" 
+                name="first_name" 
+                value = "{{emp.get('first_name', '')}}" maxlength="50">
+            </td>
+        </tr>
+        <tr>
+            <td><label for="last_name">Last Name:</label></td>
+            <td><input type="text" id="last_name" 
+                name="last_name" 
+                value = "{{emp.get('last_name', '')}}" maxlength="50">
+            </td>
+        </tr>
+
+        <tr></tr>
+            <td><label for="date_of_birth">Date of Birth:</label></td>
+            <td><input type="date" id="date_of_birth" 
+                name="date_of_birth" 
+                value = "{{emp.get('date_of_birth', '')}}">
+            </td>
+        </tr>
+
+        <tr></tr>
+            <td><label for="date_of_joining">Date of Joining:</label></td>
+            <td><input type="date" id="date_of_joining" 
+                name="date_of_joining" 
+                value = "{{emp.get('date_of_joining', '')}}">
+            </td>
+        </tr>
+
+        <tr></tr>
+            <td><label for="date_of_leaving">Date of Leaving:</label></td>
+            <td><input type="date" id="date_of_leaving" 
+                name="date_of_leaving" 
+                value = "{{emp.get('date_of_leaving', '')}}">
+            </td>
+        </tr>
+
+        <tr></tr>
+            <td><label for="phone_number">Phone Number:</label></td>
+            <td><input type="number" id="phone_number" 
+                name="phone_number" 
+                value = "{{emp.get('phone_number', '')}}">
+            </td>
+        </tr>
+
+        <tr></tr>
+            <td><label for="marital_status">Marital Status:</label></td>
+            <td>
+                <select name = "marital_status">
+                    {% if request.method == 'GET' %}
+                    <option disabled selected value style="display:none"> -- select an option -- </option>
+                    {% endif %}
+                {%for i in range(0, maritals_len)%}
+                    <option value="{{maritals[i][0]}}"
+                    {% if maritals[i][0] == emp.get('marital_status', '') | int %}
+                        SELECTED
+                    {% endif %}
+                    >{{maritals[i][1]}}</option>
+                {%endfor%}
+                </select>        
+            </td>
+        </tr>
+
+        <tr></tr>
+            <td><label for="status">Status:</label></td>
+            <td>
+                <select name = "status">
+                {%for i in range(0, statuses_len)%}
+                    <option value="{{statuses[i][0]}}"
+                    
+                    {% if statuses[i][0] == emp.get('status', 1) | int  %}
+                        SELECTED
+                    {% endif %}>
+                    
+                    {{statuses[i][1]}}</option>
+                {%endfor%}
+                </select>        
+            </td>
+        </tr>
+
+        </table>
+        <button type="submit" id="searchButton">Save</button>
+    </form>
+</body>
+</html>
