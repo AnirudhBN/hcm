@@ -3,74 +3,117 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
     <title>Add Employee</title>
   </head>
-<body>
+<body onload = "document.getElementById('ed').style.display = 'block';">
+    <div style="width: 100%; overflow: hidden;">
+        <div style="width: 280px; float: left;">
+            <h1>HCM</h1>
+            <p style="font-size:10px;padding-left:16px;">User logged in: <b>{{request.cookies.get('hcm')}}</b>.</p>
+            <ul>
+                <li><a href="/employees">Employees</a></li>
+                <li><a class="active" href="/upsert-employee">Add Employee</a></li>
+                <li><a href="/admin">Administration</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/logout">Logout</a></li>
+              </ul>
+        </div>
+        <div style="margin-left: 300px;margin-top: 80px;">
+
     {% if error %}
-    <div style="color: red;">{{error}}</div>
+    <div style="color: red;">{{error}}</div><br/>
     {% endif %}
+
+    <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'ed')">Employee Details</button>
+        <button class="tablinks" onclick="openTab(event, 'jd')">Job Details</button>
+    </div>
+
     <form action="{{ url_for('upsert_employees') }}" method="post">
         <input type="hidden" id="employee_id" 
                 name="employee_id" 
                 value = "{{emp.get('employee_id', '')}}">
-        <table border="1">
+        
+        <div id="ed" class="tabcontent">        
+        <table border="0">
         <tr>
-            <td><label for="first_name">First Name:</label></td>
+            <td><label for="first_name">*First Name:</label></td>
             <td><input type="text" id="first_name" 
                 name="first_name" 
-                value = "{{emp.get('first_name', '')}}" maxlength="50">
+                value = "{{emp.get('first_name', '')}}" max="50" required>
             </td>
         </tr>
         <tr>
-            <td><label for="last_name">Last Name:</label></td>
+            <td><label for="last_name">*Last Name:</label></td>
             <td><input type="text" id="last_name" 
                 name="last_name" 
-                value = "{{emp.get('last_name', '')}}" maxlength="50">
+                value = "{{emp.get('last_name', '')}}" max="50" required>
             </td>
         </tr>
 
-        <tr></tr>
-            <td><label for="date_of_birth">Date of Birth:</label></td>
+        <tr>
+            <td><label for="date_of_birth">*Date of Birth:</label></td>
             <td><input type="date" id="date_of_birth" 
                 name="date_of_birth" 
-                value = "{{emp.get('date_of_birth', '')}}">
+                value = "{{emp.get('date_of_birth', '')}}" required>
             </td>
         </tr>
 
-        <tr></tr>
-            <td><label for="date_of_joining">Date of Joining:</label></td>
+        <tr>
+            <td><label for="date_of_joining">*Date of Joining:</label></td>
             <td><input type="date" id="date_of_joining" 
                 name="date_of_joining" 
-                value = "{{emp.get('date_of_joining', '')}}">
+                value = "{{emp.get('date_of_joining', '')}}" required>
             </td>
         </tr>
 
-        <tr></tr>
+        <tr>
             <td><label for="date_of_leaving">Date of Leaving:</label></td>
             <td><input type="date" id="date_of_leaving" 
                 name="date_of_leaving" 
-                value = "{{emp.get('date_of_leaving', '')}}">
+                value = "{{emp.get('date_of_leaving', '') or ''}}">
             </td>
         </tr>
 
-        <tr></tr>
+        <tr>
             <td><label for="phone_number">Phone Number:</label></td>
             <td><input type="number" id="phone_number" 
                 name="phone_number" 
-                value = "{{emp.get('phone_number', '')}}">
+                value = "{{emp.get('phone_number', '') or ''}}">
             </td>
         </tr>
 
-        <tr></tr>
-            <td><label for="marital_status">Marital Status:</label></td>
+        <tr>
+            <td><label for="status">Manager:</label></td>
             <td>
-                <select name = "marital_status">
+                <select name = "manager">
+                {% if not emp.get('manager') %}
+                <option disabled selected value style="display:none"> -- select an option -- </option>
+                {% endif %}
+                {%for i in range(0, managers_len)%}
+                    <option value="{{managers[i][0]}}"
+                    
+                    {% if managers[i][0] == emp.get('manager') | int  %}
+                        SELECTED
+                    {% endif %}>
+                    
+                    {{managers[i][1]}}</option>
+                {%endfor%}
+                </select>        
+            </td>
+        </tr>
+
+        <tr>
+            <td><label for="marital_status">*Marital Status:</label></td>
+            <td>
+                <select name = "marital_status" required>
                     {% if request.method == 'GET' %}
                     <option disabled selected value style="display:none"> -- select an option -- </option>
                     {% endif %}
                 {%for i in range(0, maritals_len)%}
                     <option value="{{maritals[i][0]}}"
-                    {% if maritals[i][0] == emp.get('marital_status', '') | int %}
+                    {% if maritals[i][0] == emp.get('marital_status') | int %}
                         SELECTED
                     {% endif %}
                     >{{maritals[i][1]}}</option>
@@ -79,7 +122,7 @@
             </td>
         </tr>
 
-        <tr></tr>
+        <tr>
             <td><label for="status">Status:</label></td>
             <td>
                 <select name = "status">
@@ -95,9 +138,57 @@
                 </select>        
             </td>
         </tr>
-
         </table>
+        </div>
+
+        <div id="jd" class="tabcontent">
+        <table border="0">
+            <tr>
+                <td><label for="job_title">Job Title:</label></td>
+                <td><input type="text" id="job_title" 
+                    name="job_title" 
+                    value = "{{emp.get('job_title') or ''}}" maxlength="50">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="job_location">Job Location:</label></td>
+                <td><input type="text" id="job_location" 
+                    name="job_location" 
+                    value = "{{emp.get('job_location') or ''}}" maxlength="50">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="cost_to_company">CTC:</label></td>
+                <td><input type="number" id="cost_to_company" 
+                    name="cost_to_company" 
+                    value = "{{emp.get('cost_to_company') or ''}}">
+                </td>
+            </tr>
+        </table>
+        </div>
+
+        <br/>
         <button type="submit" id="searchButton">Save</button>
+        <button onclick="location.href='/employees'" type="button">Cancel</button>
     </form>
+
+    <script>
+        function openTab(evt, sectionName) {
+          var i, tabcontent, tablinks;
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+          }
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+          document.getElementById(sectionName).style.display = "block";
+          evt.currentTarget.className += " active";
+        }
+        </script>
+        <br/><br/>
+        </div>
+    </div>
 </body>
 </html>

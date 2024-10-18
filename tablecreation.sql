@@ -12,8 +12,13 @@ create table employees(
 	date_of_leaving DATE,
 	status_code INT NOT NULL REFERENCES status_codes(status_code),
 	marital_status_code INT NOT NULL REFERENCES marital_status_codes(marital_status_code),
-	phone_number VARCHAR(10)
+	phone_number VARCHAR(10),
+	job_title VARCHAR(50),
+	job_location VARCHAR(100),
+	cost_to_company INT
     );
+
+ALTER TABLE employees AUTO_INCREMENT=10001;
 
 create table status_codes(
 	status_code INT PRIMARY KEY,
@@ -25,23 +30,13 @@ create table marital_status_codes(
 	marital_status_text VARCHAR(20) NOT NULL
 );
 
-create table job_details(
-	job_id INT PRIMARY KEY,
-	job_title VARCHAR(50) NOT NULL,
-	job_location VARCHAR(100) NOT NULL,
-	cost_to_company INT NOT NULL,
-	employee_id INT NOT NULL REFERENCES employees(employee_id)
+
+create table users(
+	user_id VARCHAR(50) PRIMARY KEY,
+	password VARCHAR(50) NOT NULL
 );
 
-create table address_details(
-	adress_id INT PRIMARY KEY,
-	employee_id INT NOT NULL REFERENCES employees(employee_id),
-	adress_line1 VARCHAR(100) NOT NULL,
-	adress_line2 VARCHAR(100),
-	city VARCHAR(50) NOT NULL,
-	state VARCHAR(50) NOT NULL,
-	pincode VARCHAR(6) NOT NULL
-);
+INSERT INTO users VALUES ('admin', 'password')
 
 INSERT INTO status_codes(status_code, status_text) VALUES (0, 'Inactive');
 INSERT INTO status_codes(status_code, status_text) VALUES (1, 'Active');

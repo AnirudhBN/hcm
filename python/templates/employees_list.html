@@ -3,9 +3,41 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+    <style>
+        th, td {
+            padding-top: 4px;
+            padding-bottom: 4px;
+            padding-left: 4px;
+            padding-right: 4px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th{
+            background-color: black;
+            color: white;
+        }
+    </style>
     <title>Employees Listing</title>
 </head>
 <body>
+    <div style="width: 100%; overflow: hidden;">
+        <div style="width: 280px; float: left;">
+            <h1>HCM</h1>
+            <p style="font-size:10px;padding-left:16px;">User logged in: <b>{{request.cookies.get('hcm')}}</b>.</p>
+            <ul>
+                <li><a class="active" href="/employees">Employees</a></li>
+                <li><a href="/upsert-employee">Add Employee</a></li>
+                <li><a href="/admin">Administration</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/logout">Logout</a></li>
+              </ul>
+        </div>
+        <div style="margin-left: 300px;margin-top: 80px;">
+            <h2>Employees List</h2>
     <form action="{{ url_for('employees') }}" method="post">
         <input type="text" id="search_term" 
                name="search_term"
@@ -20,11 +52,12 @@
     <br/>
     <table border="1">
             <tr>
-                <td>Id</td><td>First Name</td><td>Last Name</td><td>Status</td><td>&nbsp;</td><td>&nbsp;</td>
+                <th>Id</th><th>First Name</th><th>Last Name</th><th>Title</th><th>Status</th><th>Reports To</th><th>&nbsp;</th><th>&nbsp;</th>
             </tr>
             {%for i in range(0, len)%}
             <tr>
                 {% set id = namespace(value=0) %}
+                {% set terminated = namespace(value=0) %}
                 {% for field in employees[i] %}
                     {% if loop.index == 1 %}
                     {% set id.value = field %}
@@ -38,15 +71,26 @@
                     <td>{{field | replace(search_term, '<mark>' ~ search_term ~ '</mark>') }}</td>
                     {% endautoescape %}
                     {% else %}
-                    <td>{{field}}</td>
+                    <td>{{field or ''}}</td>
+                    {% endif %}
+
+                    {% if loop.index == 5 and field == 'Leaver' %}
+                    {% set terminated.value = 1 %}
                     {% endif %}
                 {%endfor%}
                 <td><a href="/delete-employee?id={{id.value}}">Delete</a></td>
+                {% if terminated.value == 0 %}
                 <td><a href="/terminate-employee?id={{id.value}}">Terminate</a></td>
+                {% else %}
+                <td>&nbsp;</td>
+                {% endif %}
             </tr>
             {%endfor%}
     </table>
     <br/>
-    <a href="/upsert-employee">Create Employee</a>
+    <button onclick="location.href='/upsert-employee'" type="button">Create Employee</button>
+    <br/><br/>
+</div>
+</div>
 </body>
 </html>

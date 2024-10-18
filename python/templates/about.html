@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+    <title>About</title>
+</head>
+<body>
+    <div style="width: 100%; overflow: hidden;">
+        <div style="width: 280px; float: left;">
+            <h1>HCM</h1>
+            <p style="font-size:10px;padding-left:16px;">User logged in: <b>{{request.cookies.get('hcm')}}</b>.</p>
+            <ul>
+                <li><a href="/employees">Employees</a></li>
+                <li><a href="/upsert-employee">Add Employee</a></li>
+                <li><a href="/admin">Administration</a></li>
+                <li><a class="active" href="/about">About</a></li>
+                <li><a href="/logout">Logout</a></li>
+              </ul>
+        </div>
+        <div style="margin-left: 300px;margin-top: 80px;width:800px;">
+            <h2>About HCM</h2>
+            <h4>Class XII Computer Science Project work (2024 - 2025), for The Hindu Senior Secondary School, Adyar.</h4>
+            <p>
+                This Human Capital Management (HCM) product is developed in Python using the Flask Web Framework and MySQL.
+                HCM is for managmenet of employees in an organization. New employees can be onboarded, and their details managed
+                using this product. When an employee leaves the organization, he/she can be marked as a leaver.
+                Employee records can also be deleted.
+            </p>
+            <p><b>Teacher</b></p>
+            <p>Ms. </p>
+            <p><b>Contributors</b></p>
+            <ol>
+                <li style="padding:6px;">&nbsp;&nbsp;Anirudh Badri Narayanan</li>
+                <li style="padding:6px;">&nbsp;&nbsp;N Naren Karthik</li>
+                <li style="padding:6px;">&nbsp;&nbsp;N Tarun</li>
+            </ol>
+            </p>
+            
+        </div>
+</div>
+</body>
+</html>

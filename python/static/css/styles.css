@@ -1,0 +1,84 @@
+@font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/static/fonts/fair.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+body {font-family: 'Playfair Display';font-size: 14px;}
+input {font-family: 'Playfair Display';font-size: 14px;}
+select {font-family: 'Playfair Display';font-size: 14px;}
+button {font-family: 'Playfair Display';font-size: 14px;}
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    background-color: black;
+    color: white;
+}
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+th, td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+ul {
+list-style-type: none;
+margin: 0;
+padding: 0;
+width: 200px;
+}
+
+h1 {
+    padding-left:16px;
+    color: blueviolet;
+}
+
+li a {
+display: block;
+color: #000;
+padding: 8px 16px;
+text-decoration: none;
+}
+
+li a.active {
+background-color: blueviolet;
+color: white;
+}
+
+li a:hover:not(.active) {
+background-color: #555;
+color: white;
+}
+
+button:hover {
+    opacity: 0.8;
+}
