@@ -69,13 +69,13 @@ def admin():
                 sql = f"INSERT INTO users(user_id, password) values ('{user_id}', '{password}')"
                 exec_sql(sql)
                 message = f'User Id {user_id} created successfully.'
-        
-        file = request.files['file']
-        if file:
-            file.save(file.filename)
-            process_upload(file.filename)
-            os.remove(file.filename)
-            return redirect("/employees")
+        else:
+            file = request.files['file']
+            if file:
+                file.save(file.filename)
+                process_upload(file.filename)
+                os.remove(file.filename)
+                return redirect("/employees")
 
 
 
@@ -88,16 +88,27 @@ def employees():
         return redirect("/");
 
     search_term = request.form.get('search_term')
+    status_filter = request.form.get('status_filter')
+    order_by = request.form.get('order_by')
 
-    sql = "select e.employee_id, e.first_name, e.last_name, e.job_title, sc.status_text, COALESCE(CONCAT(m.first_name, ' ', m.last_name), ' ') as manager_name from employees e inner join status_codes sc on e.status_code = sc.status_code"
-    sql = sql + " left join employees m on e.manager_id = m.employee_id"
+    sql = "select e.employee_id, e.first_name, e.last_name, e.job_title, sc.status_text, COALESCE(CONCAT(m.first_name, ' ', m.last_name), ' ') as manager_name, e.phone_number, DATE_FORMAT(e.date_of_birth, '%d-%m-%Y') as date_of_birth, DATE_FORMAT(e.date_of_joining, '%d-%m-%Y') as date_of_joining, TIMESTAMPDIFF(YEAR, e.date_of_joining, CURDATE()) as experience from employees e inner join status_codes sc on e.status_code = sc.status_code"
+    sql = sql + " left join employees m on e.manager_id = m.employee_id where 1 = 1"
     if search_term:
-        sql = sql + f" where e.first_name like '%{search_term}%' OR e.last_name like '%{search_term}%'"
-    sql = sql + " ORDER BY e.employee_id"
-
+        sql = sql + f" AND (e.first_name like '%{search_term}%' OR e.last_name like '%{search_term}%')"
+    if status_filter:
+        sql = sql + f" AND e.status_code = {status_filter}"
+    if order_by:
+        if order_by == '0':
+            sql = sql + " ORDER BY e.date_of_joining ASC"
+        else:
+            sql = sql + " ORDER BY e.date_of_joining DESC"
+    else:
+        sql = sql + " ORDER BY e.employee_id"
+    print(sql)
     list = get_data(sql)
+    statuses = get_data("SELECT status_code, status_text FROM status_codes")
 
-    return render_template('employees_list.html', employees = list, len = len(list), search_term = search_term or '')
+    return render_template('employees_list.html', employees = list, len = len(list), search_term = search_term or '', statuses = statuses, statuses_len = len(statuses), status_filter = status_filter or '999999999', order_by = order_by or 99999)
 
 # GET - Blank
 # GET - with id

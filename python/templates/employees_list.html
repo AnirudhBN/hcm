@@ -40,19 +40,56 @@
             <h2>Employees List</h2>
     <form action="{{ url_for('employees') }}" method="post">
         <input type="text" id="search_term" 
-               name="search_term"
-               size = "30"
-               placeholder="Search by first and last name" 
-               value = "{{ search_term }}"
-               >
-        <button type="submit" id="searchButton">
-              Search
-          </button>
+            name="search_term"
+            size = "30"
+            placeholder="Search by first and last name" 
+            value = "{{ search_term }}">
+        <button type="submit" id="searchButton">Search</button>
+        <br/><br/>
+        <table border="0" cellspacing="0" cellpadding="0" style="border: none;">
+            <tr>
+                <td style="border: none;">
+                    <label for="status_filter">Filter by Status:</label>
+                </td>
+                <td style="border: none;">
+                    <select name = "status_filter" onchange="this.form.submit()">
+                        <option selected value> -- All -- </option>
+                        {%for i in range(0, statuses_len)%}
+                        <option value="{{statuses[i][0]}}"
+                            {% if statuses[i][0] == status_filter | int %}
+                            SELECTED
+                            {% endif %}>
+                        {{statuses[i][1]}}</option>
+                        {%endfor%}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: none;">
+                    <label for="order_by">Order by:</label>
+                </td>
+                <td style="border: none;">
+                    <select name = "order_by" onchange="this.form.submit()">
+                        <option selected value> -- None -- </option>
+                        <option value="0"
+                            {% if order_by == "0" %}
+                            SELECTED
+                            {% endif %}>
+                        Most Experienced</option>
+                        <option value="1"
+                            {% if order_by == "1" %}
+                            SELECTED
+                            {% endif %}>
+                        Least Experienced</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
     </form>
     <br/>
     <table border="1">
             <tr>
-                <th>Id</th><th>First Name</th><th>Last Name</th><th>Title</th><th>Status</th><th>Reports To</th><th>&nbsp;</th><th>&nbsp;</th>
+                <th>Id</th><th>First Name</th><th>Last Name</th><th>Title</th><th>Status</th><th>Reports To</th><th>Phone</th><th>Date of Birth</th><th>Date of Joining</th><th>Experience (Years)</th><th>&nbsp;</th><th>&nbsp;</th>
             </tr>
             {%for i in range(0, len)%}
             <tr>
