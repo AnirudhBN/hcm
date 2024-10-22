@@ -42,7 +42,7 @@
         <input type="text" id="search_term" 
             name="search_term"
             size = "30"
-            placeholder="Search by first and last name" 
+            placeholder="Search" 
             value = "{{ search_term }}">
         <button type="submit" id="searchButton">Search</button>
         <br/><br/>
@@ -60,6 +60,40 @@
                             SELECTED
                             {% endif %}>
                         {{statuses[i][1]}}</option>
+                        {%endfor%}
+                    </select>
+                </td>
+            </tr>
+           <tr>
+                <td style="border: none;">
+                    <label for="titles_filter">Filter by Title:</label>
+                </td>
+                <td style="border: none;">
+                    <select name = "titles_filter" onchange="this.form.submit()">
+                        <option selected value> -- All -- </option>
+                        {%for i in range(0, titles_len)%}
+                        <option value="{{titles[i][0]}}"
+                            {% if titles[i][0] == titles_filter %}
+                            SELECTED
+                            {% endif %}>
+                        {{titles[i][0]}}</option>
+                        {%endfor%}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: none;">
+                    <label for="managers_filter">Filter by Manager Name:</label>
+                </td>
+                <td style="border: none;">
+                    <select name = "managers_filter" onchange="this.form.submit()">
+                        <option selected value> -- All -- </option>
+                        {%for i in range(0, managers_len)%}
+                        <option value="{{managers[i][0]}}"
+                            {% if managers[i][0] == managers_filter | int %}
+                            SELECTED
+                            {% endif %}>
+                        {{managers[i][1]}}</option>
                         {%endfor%}
                     </select>
                 </td>
@@ -84,7 +118,10 @@
                     </select>
                 </td>
             </tr>
-        </table>
+        </table><br/>
+        {% if len > 0 %}
+        <input type="submit" name="export" value="Export"/>
+        {% endif %}
     </form>
     <br/>
     <table border="1">
@@ -104,6 +141,10 @@
                     <td>{{field | replace(search_term, '<mark>' ~ search_term ~ '</mark>') }}</td>
                     {% endautoescape %}
                     {% elif loop.index == 3 and search_term %}
+                    {% autoescape false %}
+                    <td>{{field | replace(search_term, '<mark>' ~ search_term ~ '</mark>') }}</td>
+                    {% endautoescape %}
+                    {% elif loop.index == 7 and search_term %}
                     {% autoescape false %}
                     <td>{{field | replace(search_term, '<mark>' ~ search_term ~ '</mark>') }}</td>
                     {% endautoescape %}
@@ -129,5 +170,10 @@
     <br/><br/>
 </div>
 </div>
+<script>
+    function export_data(id) {
+        document.getElementById("export").value = id;
+    }
+</script>
 </body>
 </html>

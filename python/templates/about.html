@@ -20,24 +20,11 @@
               </ul>
         </div>
         <div style="margin-left: 300px;margin-top: 80px;width:800px;">
-            <h2>About HCM</h2>
-            <h4>Class XII Computer Science Project work (2024 - 2025), for The Hindu Senior Secondary School, Adyar.</h4>
-            <p>
-                This Human Capital Management (HCM) product is developed in Python using the Flask Web Framework and MySQL.
-                HCM is for managmenet of employees in an organization. New employees can be onboarded, and their details managed
-                using this product. When an employee leaves the organization, he/she can be marked as a leaver.
-                Employee records can also be deleted.
-            </p>
-            <p><b>Teacher</b></p>
-            <p>Ms. </p>
-            <p><b>Contributors</b></p>
-            <ol>
-                <li style="padding:6px;">&nbsp;&nbsp;Anirudh Badri Narayanan</li>
-                <li style="padding:6px;">&nbsp;&nbsp;N Naren Karthik</li>
-                <li style="padding:6px;">&nbsp;&nbsp;N Tarun</li>
-            </ol>
-            </p>
-            
+            {% autoescape false %}
+            {%for i in range(0, len)%}
+            {{content[i]}}
+            {%endfor%}
+            {% endautoescape %}
         </div>
 </div>
 </body>

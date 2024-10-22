@@ -49,7 +49,14 @@ def index():
 
 @app.route('/about', methods=['GET'])
 def about():
-    return render_template('about.html')
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        about_file_path = os.path.join(basedir, 'static/about/about.txt')
+        content = []
+        about_file = open(about_file_path,"r")
+        for line in about_file.readlines():
+            content.append(line.rstrip('\n'))
+
+        return render_template('about.html', content = content, len=len(content))
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -89,14 +96,20 @@ def employees():
 
     search_term = request.form.get('search_term')
     status_filter = request.form.get('status_filter')
+    titles_filter = request.form.get('titles_filter')
+    managers_filter = request.form.get('managers_filter')
     order_by = request.form.get('order_by')
 
     sql = "select e.employee_id, e.first_name, e.last_name, e.job_title, sc.status_text, COALESCE(CONCAT(m.first_name, ' ', m.last_name), ' ') as manager_name, e.phone_number, DATE_FORMAT(e.date_of_birth, '%d-%m-%Y') as date_of_birth, DATE_FORMAT(e.date_of_joining, '%d-%m-%Y') as date_of_joining, TIMESTAMPDIFF(YEAR, e.date_of_joining, CURDATE()) as experience from employees e inner join status_codes sc on e.status_code = sc.status_code"
     sql = sql + " left join employees m on e.manager_id = m.employee_id where 1 = 1"
     if search_term:
-        sql = sql + f" AND (e.first_name like '%{search_term}%' OR e.last_name like '%{search_term}%')"
+        sql = sql + f" AND (e.first_name like '%{search_term}%' OR e.last_name like '%{search_term}%' OR e.phone_number like '%{search_term}%' OR e.employee_id like '%{search_term}%')"
     if status_filter:
         sql = sql + f" AND e.status_code = {status_filter}"
+    if titles_filter:
+        sql = sql + f" AND e.job_title = '{titles_filter}'"
+    if managers_filter:
+        sql = sql + f" AND m.employee_id = {managers_filter}"
     if order_by:
         if order_by == '0':
             sql = sql + " ORDER BY e.date_of_joining ASC"
@@ -107,8 +120,24 @@ def employees():
     print(sql)
     list = get_data(sql)
     statuses = get_data("SELECT status_code, status_text FROM status_codes")
+    titles = get_data("SELECT DISTINCT job_title from employees where job_title is not null")
+    managers = get_data("select DISTINCT m.employee_id, CONCAT(m.first_name, ' ', m.last_name) from employees e INNER JOIN employees m ON e.manager_id = m.employee_id")
+    
+    if request.form.get('export') and request.form.get('export') == "Export":
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        file_path = os.path.join(basedir, 'static/export.csv')
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        about_file = open(file_path,"w")
+        if list:
+            about_file.write("Id, First Name, Last Name, Title, Status, Phone\n")
+        for record in list:
+            csv = f"{record[0]},{record[1]},{record[2]},{record[3]},{record[4]},{record[6] or ''}\n"
+            about_file.write(csv)
+        about_file.close()
+        return send_file(file_path, as_attachment=True, download_name='export.csv')
 
-    return render_template('employees_list.html', employees = list, len = len(list), search_term = search_term or '', statuses = statuses, statuses_len = len(statuses), status_filter = status_filter or '999999999', order_by = order_by or 99999)
+    return render_template('employees_list.html', employees = list, len = len(list), search_term = search_term or '', statuses = statuses, statuses_len = len(statuses), titles = titles, titles_len = len(titles), managers = managers, managers_len = len(managers), status_filter = status_filter or '999999999', order_by = order_by or 99999, titles_filter = titles_filter or '', managers_filter = managers_filter or '')
 
 # GET - Blank
 # GET - with id
